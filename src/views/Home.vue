@@ -160,37 +160,29 @@
 
                     <div class="left-ads-display col-lg-9">
                         <div class="row">
-                            <div class="col-md-4 product-men">
+                            <div v-for="movie in listMovie" :key="movie.id" class="col-md-4 product-men">
                                 <div class="product-shoe-info editContent text-center mt-lg-4">
                                     <div class="men-thumb-item">
-                                        <img src="bundles/images/s1.jpg" class="img-fluid" alt="">
+                                        <img :src="movie.poster" class="img-fluid" alt="">
                                     </div>
                                     <div class="item-info-product">
                                         <h4 class="">
-                                            <a href="moviesingle.html" class="editContent">К
-                                                звездам</a>
+                                            <a href="#" class="editContent">{{ movie.title }}</a>
                                         </h4>
 
                                         <div class="product_price">
                                             <div class="grid-price">
-                                                <span class="money editContent">«The Game Begins»</span>
+                                                <span class="money editContent">{{movie.tagline}}</span>
                                             </div>
                                         </div>
                                         <ul class="stars">
-                                            <li><a href="#"><span class="fa fa-star"
-                                                                  aria-hidden="true"></span></a>
-                                            </li>
-                                            <li><a href="#"><span class="fa fa-star"
-                                                                  aria-hidden="true"></span></a>
-                                            </li>
-                                            <li><a href="#"><span class="fa fa-star-half-o"
-                                                                  aria-hidden="true"></span></a>
-                                            </li>
-                                            <li><a href="#"><span class="fa fa-star-half-o"
-                                                                  aria-hidden="true"></span></a>
-                                            </li>
-                                            <li><a href="#"><span class="fa fa-star-o"
-                                                                  aria-hidden="true"></span></a>
+                                            <li v-for="star in listStar" :key="star">
+                                                <a href="#">
+                                                    <span class="fa"
+                                                          :class="star <= movie.middle_star ? 'fa-star' : 'fa-star-o' "
+                                                          aria-hidden="true">
+                                                    </span>
+                                                </a>
                                             </li>
                                         </ul>
                                     </div>
@@ -205,10 +197,26 @@
 </template>
 
 <script>
-
     export default {
         name: 'Home',
-        components: {}
+        data() {
+            return {
+                listMovie: [],
+                listStar: [1, 2, 3, 4, 5]
+            }
+        },
+        components: {},
+        created() {
+            this.loadListMovies()
+        },
+        methods: {
+            async loadListMovies() {
+                this.listMovie = await fetch(
+                    `${this.$store.getters.getServerUrl}/movie`
+                ).then(response => response.json())
+                console.log(this.listMovie)
+            }
+        }
     }
 </script>
 
