@@ -5,32 +5,43 @@
                 <div class="left-ads-display col-lg-10">
                     <div class="row">
                         <div class="desc1-left col-md-6">
-                            <img src="" class="img-fluid" alt="">
+                            <img :src="movie.poster" class="img-fluid" alt="">
                         </div>
                         <div class="desc1-right col-md-6 pl-lg-4">
-                            <h3 class="editContent">
-                                ТЕРМИНАТОР: ТЕМНЫЕ СУДЬБЫ</h3>
-                            <h5 class="editContent">Terminator: Dark Fate</h5>
+                            <h3 class="editContent">{{movie.title}}</h3>
+                            <h5 class="editContent">{{movie.tagline}}</h5>
                             <ul>
-                                <li class="li-movie"><span><b>Год:</b> 2019</span></li>
-                                <li class="li-movie"><span><b>Страна:</b> США, Китай</span>
+                                <li class="li-movie"><span><b>Год:</b> {{movie.year}}</span></li>
+                                <li class="li-movie"><span><b>Страна:</b> {{movie.country}}</span>
                                 </li>
-                                <li class="li-movie"><span><b>Слоган:</b> «Welcome to the Day after Judgment Day»</span>
-                                </li>
-                                <li class="li-movie">
-                                    <span><b>Режиссер:</b> Тим Миллер</span></li>
-                                <li class="li-movie"><span><b>Актеры:</b> Арнольд Шварценеггер, Маккензи Дэвис,
-                                    Эдвард Ферлонг, Линда Хэмилтон, Том Хоппер, Кассандра Старр, Гэбриел Луна,
-                                    Наталия Рейес, Стивен Кри, Диего Бонета</span></li>
-                                <li class="li-movie"><span><b>Жанр:</b> фантастика, боевик, приключения</span>
-                                </li>
-                                <li class="li-movie"><span><b>Премьера в мире:</b> 23 октября 2019</span>
+                                <li class="li-movie"><span><b>Слоган:</b>{{movie.tagline}}</span>
                                 </li>
                                 <li class="li-movie">
-                                    <span><b>Бюджет:</b> $185 000 000</span></li>
+                                    <span><b>Режиссеры:</b>
+                                        <span v-for="director in movie.directors" :key="director.id">
+                                            {{director.name}}
+                                        </span>
+                                    </span>
+                                </li>
+                                <li class="li-movie"><span><b>Актеры:</b>
+                                    <span v-for="actor in movie.actors" :key="actor.id">
+                                            {{actor.name}}
+                                    </span>
+                                </span>
+                                </li>
+                                <li class="li-movie"><span><b>Жанр:</b>
+                                    <span v-for="genre in movie.genres" :key="genre">
+                                        {{genre}}
+                                    </span>
+                                </span>
+                                </li>
+                                <li class="li-movie"><span><b>Премьера в мире:</b> {{movie.world_premiere}}</span>
+                                </li>
                                 <li class="li-movie">
-                                    <span><b>Сборы в США:</b> $61 150 256</span></li>
-                                <li class="li-movie"><span><b>Сборы в мире:</b> $250 369 693</span>
+                                    <span><b>Бюджет:</b> ${{movie.budget}}</span></li>
+                                <li class="li-movie">
+                                    <span><b>Сборы в США:</b> ${{movie.fees_in_usa}}</span></li>
+                                <li class="li-movie"><span><b>Сборы в мире:</b> ${{movie.fess_in_world}}</span>
                                 </li>
                                 <li   class="li-movie">
                                     <a href="#"><b>Рейтинг:</b>
@@ -75,38 +86,13 @@
                     <div class="row sub-para-w3layouts mt-5">
 
                         <h3 class="shop-sing editContent">
-                            О фильме Терминатор: Темные судьбы</h3>
+                            О фильме {{movie.title}}</h3>
                         <p>
                             <img src="bundles/images/about.jpg" class="img-fluid" alt="">
                             <img src="bundles/images/admin.jpg" class="img-fluid" alt="">
                             <img src="bundles/images/d1.jpg" class="img-fluid" alt="">
                         </p>
-                        <p class="editContent">Сара Коннор
-                            превратилась в настоящую охотницу
-                            за терминаторами и теперь занимается уничтожением роботов-убийц из
-                            будущего.
-                            Она считала, что главное — это не дать им добраться до Джона, но теперь
-                            появилась
-                            Дани Рамос, от выживания которой также зависит судьба человечества.
-                            Вместе с ней в бой вступает и загадочная Грейс, смесь человека и
-                            машины.</p>
-                        <p class="mt-3 italic-blue editContent">
-                            <iframe width="560" height="315"
-                                    src="https://www.youtube.com/embed/A36LahZNUiE?controls=0"
-                                    frameborder="0" allow="accelerometer; autoplay;
-                                                                           encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen>
-
-                            </iframe>
-                        </p>
-                        <p class="mt-3 editContent">
-                            Человечество дорого заплатило за технический прогресс, поставив под
-                            угрозу свое выживание.
-                            Пришло время покончить с войной между машинами и людьми.
-                            Научно-фантастический боевик,
-                            заключительная часть трилогии, перезапускающей франшизу «Терминатора»
-                            Джеймса Кэмерона.
-                        </p>
+                        <p class="editContent" v-html="movie.description"></p>
                     </div>
                     <hr>
                     <div class="row">
@@ -175,7 +161,25 @@
 
 <script>
     export default {
-        name: "Single"
+        name: "Single",
+        props: ['id'],
+        data() {
+            return {
+                movie: {}
+            }
+        },
+        created() {
+            this.loadMovie()
+        },
+        methods: {
+            async loadMovie() {
+                this.movie = await fetch(
+                    `${this.$store.getters.getServerUrl}/movie/${this.id}`
+                ).then(response => response.json())
+                console.log(this.movie)
+                console.log(this.id)
+            }
+        }
     }
 </script>
 
