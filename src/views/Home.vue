@@ -189,6 +189,7 @@
                                 </div>
                             </div>
                         </div>
+                        <Pagination :total="total" :item="listMovie.length" @page-changed="loadListMovies"/>
                     </div>
                 </div>
             </div>
@@ -197,23 +198,30 @@
 </template>
 
 <script>
+    import Pagination from "../components/Pagination";
     export default {
         name: 'Home',
         data() {
             return {
                 listMovie: [],
-                listStar: [1, 2, 3, 4, 5]
+                listStar: [1, 2, 3, 4, 5],
+                page: 1,
+                total: 0
             }
         },
-        components: {},
+        components: {Pagination},
         created() {
-            this.loadListMovies()
+            this.loadListMovies(this.page)
         },
         methods: {
-            async loadListMovies() {
+            async loadListMovies(pageNumber) {
                 this.listMovie = await fetch(
-                    `${this.$store.getters.getServerUrl}/movie`
-                ).then(response => response.json())
+                    `${this.$store.getters.getServerUrl}/movie?page=${pageNumber}`
+                ).then(response => response.json()
+                ).then(response => {
+                    this.total = response.count
+                    return response.results
+                })
             },
             goTo(id) {
                 this.$router.push({ name: 'Single', params: {id: id} })
