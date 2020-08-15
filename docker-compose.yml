@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  vue:
+    container_name: vue-movie
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    ports:
+      - '8081:8080'
